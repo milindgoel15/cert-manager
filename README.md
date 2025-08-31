@@ -101,13 +101,13 @@ Main Menu
 bash validate.sh
 
 Example:
-
+```
 [*] Enter certificate file path: ./input/server.crt
 >>> Certificate is valid
 >>> Expiration: Nov 20 12:00:00 2026 GMT
 >>> Issuer: CN=RootCA
 >>> SAN: DNS:example.com, DNS:www.example.com
-
+```
 ---
 
 Other Features:
