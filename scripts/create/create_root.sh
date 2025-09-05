@@ -19,6 +19,9 @@ if [[ -f "$INPUT_DIR/$ROOT_KEY" && -f "$INPUT_DIR/$ROOT_CERT" ]]; then
     cp "$INPUT_DIR/$ROOT_KEY" "$ROOT_CA_DIR/"
     cp "$INPUT_DIR/$ROOT_CERT" "$ROOT_CA_DIR/"
     log green "Using Root CA from input/ and copied into $ROOT_CA_DIR"
+    echo "ROOT_CA_DIR=$ROOT_CA_DIR" >> "$ROOT_DIR/env.sh"
+    echo "ROOT_CERT=$ROOT_CERT" >> "$ROOT_DIR/env.sh"
+    echo "ROOT_KEY=$ROOT_KEY" >> "$ROOT_DIR/env.sh"
     exit 0
   fi
 fi
@@ -27,13 +30,9 @@ fi
 log cyan "Generating Root CA..."
 run openssl genrsa -des3 -out "$ROOT_CA_DIR/$ROOT_KEY" 2048
 run openssl req -x509 -new -nodes -key "$ROOT_CA_DIR/$ROOT_KEY" -sha256 -days 1825 -out "$ROOT_CA_DIR/$ROOT_CERT"
-
 log green "Root CA created at $ROOT_CA_DIR"
-
-
-cleanup_run_dir_if_empty
-
-
 
 echo "ROOT_CA_DIR=$ROOT_CA_DIR" >> "$ROOT_DIR/env.sh"
 echo "ROOT_CERT=$ROOT_CERT" >> "$ROOT_DIR/env.sh"
+
+cleanup_run_dir_if_empty
