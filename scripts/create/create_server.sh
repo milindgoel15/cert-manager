@@ -1,9 +1,10 @@
 #!/bin/bash
-source "$RUN_DIR/env.sh"
-
 ROOT_DIR="$(dirname "$(dirname "$(dirname "$0")")")"
 echo "Using $ROOT_DIR"
+
+source "$ROOT_DIR/env.sh"
 source "$ROOT_DIR/utils/common.sh"
+
 
 setup_dirs
 
@@ -22,7 +23,14 @@ mkdir -p "$SERVER_DIR"
 
 log cyan "Generating Server key..."
 
-run openssl genrsa -des3 -out "$SERVER_DIR/$SERVER_KEY" 2048
+if [[ -f "$INPUT_DIR/$SERVER_KEY" ]]; then
+  cp "$INPUT_DIR/$SERVER_KEY" "$SERVER_DIR/$SERVER_KEY"
+  log yellow "Using existing Server key file from input/"
+else
+  log yellow "Generating new Server key file..."
+  run openssl genrsa -des3 -out "$SERVER_DIR/$SERVER_KEY" 2048
+fi
+
 # ==== Check for existing SAN config ====
 if [[ -f "$INPUT_DIR/$SERVER_SAN" ]]; then
   cp "$INPUT_DIR/$SERVER_SAN" "$SERVER_DIR/$SERVER_SAN"
