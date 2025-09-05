@@ -7,7 +7,6 @@ source "$ROOT_DIR/utils/common.sh"
 setup_dirs
 
 INTER_CA="ExampleIntermediateCA"
-
 INTER_KEY="Example_RSA_Inter.key"
 INTER_CSR="Example_RSA_Inter.csr"
 INTER_CERT="Example_RSA_Inter.pem"
@@ -106,8 +105,8 @@ EOF
 fi
 
 
-echo "INTER_USED=$INTER_USED" >> "$ROOT_DIR/env.sh"
-echo "INTER_CA=$INTER_CA" >> "$ROOT_DIR/env.sh"
-echo "INTER_CERT=$INTER_CERT" >> "$ROOT_DIR/env.sh"
-echo "INTER_KEY=$INTER_KEY" >> "$ROOT_DIR/env.sh"
-echo "CHAIN_FILE=$CHAIN_FILE" >> "$ROOT_DIR/env.sh"
+set_env_var INTER_USED "$INTER_USED"
+set_env_var INTER_CA "$INTER_CA"
+set_env_var INTER_CERT "$INTER_CERT"
+set_env_var INTER_KEY "$INTER_KEY"
+set_env_var CHAIN_FILE "$CHAIN_FILE"

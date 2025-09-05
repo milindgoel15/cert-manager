@@ -97,3 +97,20 @@ prompt_file() {
   fi
   echo "$norm"
 }
+
+# ========= Manage env.sh =========
+set_env_var() {
+  local key="$1"
+  local value="$2"
+  local file="$ROOT_DIR/env.sh"
+
+  # Ensure env.sh exists
+  touch "$file"
+
+  # If key exists, replace it. Otherwise, append it.
+  if grep -q "^${key}=" "$file"; then
+    sed -i "s|^${key}=.*|${key}=${value}|" "$file"
+  else
+    echo "${key}=${value}" >> "$file"
+  fi
+}
