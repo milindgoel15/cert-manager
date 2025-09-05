@@ -24,7 +24,8 @@ while true; do
   echo "8) PFX (.pfx) -> PEM (.pem + key)"
   echo "9) Extract public key from PEM"
   echo "10) Extract private key from PEM"
-  echo "11) Exit to cert-manager"
+  echo "11) Convert encrypted private key to encrypted private key"
+  echo "12) Exit to cert-manager"
   echo "======================================"
   echo
   read -r -p "Select your option: " choice
@@ -119,6 +120,14 @@ while true; do
       log $GREEN "Output: $OUT"
       ;;
     11)
+      INPUT=$(prompt_file "Enter private key path:")
+      [ -z "$INPUT" ] && continue
+      OUT="$(basename "${INPUT%.*}")-unencrypted.key"
+      log $CYAN "Extracting private key..."
+      openssl rsa -in "$INPUT" -out "$OUT"
+      log $GREEN "Output: $OUT"
+      ;;
+    12)
       log $CYAN "Returning to cert-manager CLI..."
       exit 0
       ;;
