@@ -82,11 +82,12 @@ EOF
 log cyan "Generating Server CSR..."
 run openssl req -new -key "$SERVER_DIR/$SERVER_KEY" -out "$SERVER_DIR/$SERVER_CSR" -config "$SERVER_DIR/$SERVER_SAN"
 log cyan "Signing Server certificate..."
-if [[ "$INTER_USED" == true ]]; then
+if [[ "${INTER_USED:-}" == true ]]; then
+  log yellow "Intermediate CA was used."
   run openssl x509 -req -in "$SERVER_DIR/$SERVER_CSR" -CA "$INTER_CA/$INTER_CERT" -CAkey "$INTER_CA/$INTER_KEY" \
     -CAcreateserial -out "$SERVER_DIR/$SERVER_CERT" -days 825 -sha256 -extfile "$SERVER_DIR/$SERVER_SAN" -extensions req_ext
 else
-  run openssl x509 -req -in "$SERVER_DIR/$SERVER_CSR" -CA "$ROOT_CA/$ROOT_CERT" -CAkey "$ROOT_CA/$ROOT_KEY" \
+  run openssl x509 -req -in "$SERVER_DIR/$SERVER_CSR" -CA "$ROOT_CA_DIR/$ROOT_CERT" -CAkey "$ROOT_CA_DIR/$ROOT_KEY" \
     -CAcreateserial -out "$SERVER_DIR/$SERVER_CERT" -days 825 -sha256 -extfile "$SERVER_DIR/$SERVER_SAN" -extensions req_ext
 fi
 #  log cyan "Verifying SANs in server certificate..."
@@ -94,7 +95,7 @@ fi
 echo
 read -p ">> Do you want to generate a PFX certificate? (y/n): " GEN_PFX
 if [[ "$GEN_PFX" =~ ^[Yy]$ ]]; then
-  if [[ "$INTER_USED" == true ]]; then
+  if [[ "${INTER_USED:-}" == true ]]; then
     log yellow "Intermediate CA was used."
     read -p ">>> Do you want FULL CHAIN PFX (Server + Intermediate + Root)? (y/n): " FULL_CHAIN
     if [[ "$FULL_CHAIN" =~ ^[Yy]$ ]]; then
@@ -115,7 +116,7 @@ if [[ "$GEN_PFX" =~ ^[Yy]$ ]]; then
       run openssl pkcs12 -export -out "$SERVER_DIR/server-fullchain.pfx" \
         -inkey "$SERVER_DIR/$SERVER_KEY" \
         -in "$SERVER_DIR/$SERVER_CERT" \
-        -certfile "$ROOT_CA/$ROOT_CERT"
+        -certfile "$ROOT_CA_DIR/$ROOT_CERT"
     else
       run openssl pkcs12 -export -out "$SERVER_DIR/server.pfx" \
         -inkey "$SERVER_DIR/$SERVER_KEY" \
